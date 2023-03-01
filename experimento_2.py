@@ -1,19 +1,12 @@
 # LIBRERIAS
 import openpyxl
-import glob
+import pandas as pd
 
-# VARIABLES_GLOBALES
+# VARIABLES GLOBALES
 num_semana = 8
-
 ruta_archivo_origen = f'/home/xeroxv23/Documents/Proyectos GCPI/reportes_personal_zonaindustrial/SEMANA_0{num_semana}/SEMANA_0{num_semana}_REPORTE.xlsx'
 
-ruta_archivo_destino = f"/home/xeroxv23/Documents/Proyectos GCPI/reportes_personal_zonaindustrial/SEMANA_0{num_semana}"
-
-# FUNCIONES
-
-
-""" Esta funcion"""
-def obtencion_datos_reporte(ruta_de_archivo):
+def captura_reporte(num_semana):
     
     # Cargamos el archivo de Excel con openpyxl
     libro = openpyxl.load_workbook(ruta_archivo_origen)
@@ -39,8 +32,10 @@ def obtencion_datos_reporte(ruta_de_archivo):
     # Devolvemos la lista de datos
     return datos_de_captura
 
+datos_de_captura = captura_reporte(8)
+print(captura_reporte(8))
 
-""" Esta funcion"""
+
 def extraer_lista_claves(datos_de_captura):
 
     # Creamos una lista vacía para guardar los segundos valores
@@ -54,8 +49,7 @@ def extraer_lista_claves(datos_de_captura):
     # Devolvemos la lista de segundos valores
     return lista_de_claves
 
+lista_claves = extraer_lista_claves(datos_de_captura)
+print(extraer_lista_claves(datos_de_captura))
 
-""" Esta funcion"""
-
-
-
+    
