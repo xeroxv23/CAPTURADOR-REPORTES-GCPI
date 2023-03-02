@@ -48,9 +48,13 @@ def obtencion_datos_reporte(ruta_de_archivo):
     # Devolvemos la lista de datos
     return datos_de_captura
 
+# Creamos la lista de datos_de_captura, con la cual trabajaremos
 datos_de_captura = obtencion_datos_reporte(ruta_archivo_origen)
+
+# La lista trabajadores, contendra las claves de cada uno de los trabajadores en datos_de_captura
 trabajadores = [lista[0] for lista in datos_de_captura]
 
+# Este ciclo for llenara la lista trabajador, enumerando a trabajadores iniciando desde el 0, para poder usarla como parametro en nuestra variable
 trabajador = []
 for i in trabajadores:
     count = 0
@@ -148,15 +152,26 @@ def capturar_reporte_personal(trabajador):
     # Seleccionamos la hoja en la que queremos buscar
     ws = wb.active
 
-    # Crear la celda del codigo y asignarle el valor de datos_de_captura[0][0]
+    # Crear la celda del codigo y asignarle la clave del trabajador
     celda_codigo = ws.cell(row=nueva_fila, column=nueva_columna)
     celda_codigo.value = datos_de_captura[trabajador][valor - 1]
+
+    # Crear la celda de horas extras, solo si existe y asignarle el valor de hora extra
+    if datos_de_captura[trabajador][valor + 2] is not None:
+        # Código para crear la celda de horas extras y asignarle el valor de hora extra
+        celda_horas = ws.cell(row=nueva_fila + 1, column=nueva_columna)
+        celda_horas.value = "hedo"
+        celda_horas2 = ws.cell(row=nueva_fila + 1, column=12)
+        celda_horas2.value = datos_de_captura[trabajador][valor + 2]
 
     # Crear las celdas de orden y asignarle el valor ultimo valor +1
     celda_orden1 = ws.cell(row=nueva_fila, column=2)
     celda_orden1.value = ultimo_valor +1
     celda_orden2 = ws.cell(row=nueva_fila, column=16)
     celda_orden2.value = ultimo_valor +1
+    if datos_de_captura[trabajador][valor + 2] is not None:
+        celda_orden3 = ws.cell(row=nueva_fila + 1, column=2)
+        celda_orden3.value = ultimo_valor +1
 
     # Crear las celdas de dias trabajadios y asignarles el valor de datos_de_captura[0][2]
     celda_dias = ws.cell(row=nueva_fila, column=12)
@@ -167,14 +182,19 @@ def capturar_reporte_personal(trabajador):
     celda_porcentaje.value = 1
 
     # Crear la celda de actividades y asignarles el valor de datos_de_captura[0][5]
-    celda_actividades = ws.cell(row=nueva_fila +1, column=4)
-    celda_actividades.value = datos_de_captura[trabajador][valor + 4]
+    if datos_de_captura[trabajador][valor + 2] is not None:
+        celda_actividades = ws.cell(row=nueva_fila +2, column=4)
+        celda_actividades.value = datos_de_captura[trabajador][valor + 4]
+    else:
+        celda_actividades = ws.cell(row=nueva_fila +1, column=4)
+        celda_actividades.value = datos_de_captura[trabajador][valor + 4]
 
     # Guardar los cambios y retornar la coordenada de la nueva celda
     wb.save(archivo_para_captura)
     trabajador +1
     return datos_capturados
 
+# El ciclo for que capturara todos los valores en los archivos de excel, recorriendo en el parametro de la funcion cada uno de los valores del reporte
 for clave in trabajador:
     print("Se capturo en los archivos, el trabajador numero : ", clave)
     capturar_reporte_personal(clave)
