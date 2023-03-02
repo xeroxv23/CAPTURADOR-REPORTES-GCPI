@@ -156,22 +156,47 @@ def capturar_reporte_personal(trabajador):
     celda_codigo = ws.cell(row=nueva_fila, column=nueva_columna)
     celda_codigo.value = datos_de_captura[trabajador][valor - 1]
 
-    # Crear la celda de horas extras, solo si existe y asignarle el valor de hora extra
-    if datos_de_captura[trabajador][valor + 2] is not None:
-        # Código para crear la celda de horas extras y asignarle el valor de hora extra
+    # Crear la celda de horas extras y domingo, solo si existen y asignarles el valor de hora extra
+    if datos_de_captura[trabajador][valor + 2] and datos_de_captura[trabajador][valor + 3] is not None:
+        # Código para crear las celdas de horas extras y domingo para asignarles los valores
+        celda_horas = ws.cell(row=nueva_fila + 1, column=nueva_columna)
+        celda_horas.value = "hedo"
+        celda_horas2 = ws.cell(row=nueva_fila + 1, column=12)
+        celda_horas2.value = datos_de_captura[trabajador][valor + 2]
+        celda_domingo = ws.cell(row=nueva_fila + 2, column=nueva_columna)
+        celda_domingo.value = "ofi01"
+        celda_domingo2 = ws.cell(row=nueva_fila + 2, column=12)
+        celda_domingo2.value = int(datos_de_captura[trabajador][valor + 3]) + 1
+    elif datos_de_captura[trabajador][valor + 2] is not None:
         celda_horas = ws.cell(row=nueva_fila + 1, column=nueva_columna)
         celda_horas.value = "hedo"
         celda_horas2 = ws.cell(row=nueva_fila + 1, column=12)
         celda_horas2.value = datos_de_captura[trabajador][valor + 2]
 
     # Crear las celdas de orden y asignarle el valor ultimo valor +1
-    celda_orden1 = ws.cell(row=nueva_fila, column=2)
-    celda_orden1.value = ultimo_valor +1
-    celda_orden2 = ws.cell(row=nueva_fila, column=16)
-    celda_orden2.value = ultimo_valor +1
-    if datos_de_captura[trabajador][valor + 2] is not None:
-        celda_orden3 = ws.cell(row=nueva_fila + 1, column=2)
-        celda_orden3.value = ultimo_valor +1
+    
+    if datos_de_captura[trabajador][valor + 2] and datos_de_captura[trabajador][valor + 3] is not None:
+        celda_orden1 = ws.cell(row=nueva_fila, column=2)
+        celda_orden1.value = ultimo_valor +1
+        celda_orden2 = ws.cell(row=nueva_fila + 2, column=16)
+        celda_orden2.value = ultimo_valor +1
+        celda_ordenh = ws.cell(row=nueva_fila + 1, column=2)
+        celda_ordenh.value = ultimo_valor +1
+        celda_ordend = ws.cell(row=nueva_fila + 2, column=2)
+        celda_ordend.value = ultimo_valor +1
+
+    elif datos_de_captura[trabajador][valor + 2] is not None:
+        celda_orden1 = ws.cell(row=nueva_fila, column=2)
+        celda_orden1.value = ultimo_valor +1
+        celda_orden2 = ws.cell(row=nueva_fila + 1, column=16)
+        celda_orden2.value = ultimo_valor +1
+        celda_ordenh = ws.cell(row=nueva_fila + 1, column=2)
+        celda_ordenh.value = ultimo_valor +1
+    else:
+        celda_orden1 = ws.cell(row=nueva_fila, column=2)
+        celda_orden1.value = ultimo_valor +1
+        celda_orden2 = ws.cell(row=nueva_fila, column=16)
+        celda_orden2.value = ultimo_valor +1
 
     # Crear las celdas de dias trabajadios y asignarles el valor de datos_de_captura[0][2]
     celda_dias = ws.cell(row=nueva_fila, column=12)
