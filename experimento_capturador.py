@@ -167,6 +167,9 @@ def capturar_reporte_personal(trabajador):
         celda_domingo.value = "ofi01"
         celda_domingo2 = ws.cell(row=nueva_fila + 2, column=12)
         celda_domingo2.value = int(datos_de_captura[trabajador][valor + 3]) + 1
+        celda_domingo3 = ws.cell(row=nueva_fila + 2, column=4)
+        celda_domingo3.value = "Domingo trabajado"
+
     elif datos_de_captura[trabajador][valor + 2] is not None:
         celda_horas = ws.cell(row=nueva_fila + 1, column=nueva_columna)
         celda_horas.value = "hedo"
@@ -207,7 +210,11 @@ def capturar_reporte_personal(trabajador):
     celda_porcentaje.value = 1
 
     # Crear la celda de actividades y asignarles el valor de datos_de_captura[0][5]
-    if datos_de_captura[trabajador][valor + 2] is not None:
+    if datos_de_captura[trabajador][valor + 2] and datos_de_captura[trabajador][valor + 3] is not None:
+        
+        celda_actividades = ws.cell(row=nueva_fila +3, column=4)
+        celda_actividades.value = datos_de_captura[trabajador][valor + 4]
+    elif datos_de_captura[trabajador][valor + 2] is not None:
         celda_actividades = ws.cell(row=nueva_fila +2, column=4)
         celda_actividades.value = datos_de_captura[trabajador][valor + 4]
     else:
