@@ -51,6 +51,36 @@ def obtencion_datos_reporte(ruta_de_archivo):
 # Creamos la lista de datos_de_captura, con la cual trabajaremos
 datos_de_captura = obtencion_datos_reporte(ruta_archivo_origen)
 
+# Creamos una sublista que representa las actividades de cada trabajador
+actividades = []
+for sublista in datos_de_captura:
+    actividad = sublista[5]
+    actividades.append(actividad)
+
+lista_de_actividades = [[] for i in range(len(actividades))]
+
+for i, actividad in enumerate(actividades):
+    # Dividir la cadena de texto en subcadenas de máximo 46 caracteres
+    subcadenas = []
+    while len(actividad) > 0:
+        if len(actividad) <= 46:
+            subcadenas.append(actividad)
+            actividad = ""
+        else:
+            espacio = actividad.rfind(" ", 0, 46)
+            if espacio == -1:
+                subcadenas.append(actividad[:46])
+                actividad = actividad[46:]
+            else:
+                subcadenas.append(actividad[:espacio])
+                actividad = actividad[espacio+1:]
+    
+    # Agregar las subcadenas a la nueva lista correspondiente
+    lista_de_actividades[i].extend(subcadenas)
+
+
+
+
 # La lista trabajadores, contendra las claves de cada uno de los trabajadores en datos_de_captura
 trabajadores = [lista[0] for lista in datos_de_captura]
 
@@ -212,15 +242,23 @@ def capturar_reporte_personal(trabajador):
     # Crear la celda de actividades y asignarles el valor de datos_de_captura[0][5]
     if datos_de_captura[trabajador][valor + 2] and datos_de_captura[trabajador][valor + 3] is not None:
         
-        celda_actividades = ws.cell(row=nueva_fila +3, column=4)
-        celda_actividades.value = datos_de_captura[trabajador][valor + 4]
-    elif datos_de_captura[trabajador][valor + 2] is not None:
-        celda_actividades = ws.cell(row=nueva_fila +2, column=4)
-        celda_actividades.value = datos_de_captura[trabajador][valor + 4]
-    else:
-        celda_actividades = ws.cell(row=nueva_fila +1, column=4)
-        celda_actividades.value = datos_de_captura[trabajador][valor + 4]
+        for valor in lista_de_actividades[trabajador]:
+            celda_actividades = ws.cell(row=nueva_fila +3, column=4)
+            celda_actividades.value = valor
+            nueva_fila += 1
 
+    elif datos_de_captura[trabajador][valor + 2] is not None:
+
+        for valor in lista_de_actividades[trabajador]:
+            celda_actividades = ws.cell(row=nueva_fila +2, column=4)
+            celda_actividades.value = valor
+            nueva_fila += 1
+    else:
+        for valor in lista_de_actividades[trabajador]:
+            celda_actividades = ws.cell(row=nueva_fila +1, column=4)
+            celda_actividades.value = valor
+            nueva_fila += 1
+            
     # Guardar los cambios y retornar la coordenada de la nueva celda
     wb.save(archivo_para_captura)
     trabajador +1
