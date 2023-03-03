@@ -33,8 +33,8 @@ def obtencion_datos_reporte(ruta_de_archivo):
 
     # Iteramos mientras haya datos en la columna A
     while hoja.cell(row=fila, column=1).value:
-        # Extraemos los valores de las columnas A, C, D, E, F, G
-        valores_fila = [hoja.cell(row=fila, column=columna).value for columna in range(1, 8) if columna in [1, 3, 4, 5, 6, 7]]
+        # Extraemos los valores de las columnas A, C, D, E, F, G, I, J
+        valores_fila = [hoja.cell(row=fila, column=columna).value for columna in range(1, 11) if columna in [1, 3, 4, 5, 6, 7, 9, 10]]
         
         # Multiplicamos el valor de la columna D por 7/6
         valores_fila[2] = valores_fila[2] * 7/6
@@ -188,11 +188,11 @@ def capturar_reporte_personal(trabajador):
     if datos_de_captura[trabajador][valor + 2] and datos_de_captura[trabajador][valor + 3] is not None:
         # Código para crear las celdas de horas extras y domingo para asignarles los valores
         celda_horas = ws.cell(row=nueva_fila + 1, column=nueva_columna)
-        celda_horas.value = "hedo"
+        celda_horas.value = datos_de_captura[trabajador][valor + 6]
         celda_horas2 = ws.cell(row=nueva_fila + 1, column=12)
         celda_horas2.value = datos_de_captura[trabajador][valor + 2]
         celda_domingo = ws.cell(row=nueva_fila + 2, column=nueva_columna)
-        celda_domingo.value = "ofi01"
+        celda_domingo.value = datos_de_captura[trabajador][valor + 5]
         celda_domingo2 = ws.cell(row=nueva_fila + 2, column=12)
         celda_domingo2.value = int(datos_de_captura[trabajador][valor + 3]) + 1
         celda_domingo3 = ws.cell(row=nueva_fila + 2, column=4)
@@ -200,7 +200,7 @@ def capturar_reporte_personal(trabajador):
 
     elif datos_de_captura[trabajador][valor + 2] is not None:
         celda_horas = ws.cell(row=nueva_fila + 1, column=nueva_columna)
-        celda_horas.value = "hedo"
+        celda_horas.value = datos_de_captura[trabajador][valor + 6]
         celda_horas2 = ws.cell(row=nueva_fila + 1, column=12)
         celda_horas2.value = datos_de_captura[trabajador][valor + 2]
 
