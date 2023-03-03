@@ -1,3 +1,0 @@
-from experimento_capturador import lista_de_actividades
-
-print(lista_de_actividades)
