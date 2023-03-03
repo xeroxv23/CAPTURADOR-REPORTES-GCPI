@@ -229,7 +229,7 @@ def capturar_reporte_personal(trabajador):
         celda_orden2 = ws.cell(row=nueva_fila, column=16)
         celda_orden2.value = ultimo_valor +1
 
-    # Crear las celdas de dias trabajadios y asignarles el valor de datos_de_captura[0][2]
+    # Crear las celdas de dias trabajados y asignarles el valor de datos_de_captura[0][2]
     celda_dias = ws.cell(row=nueva_fila, column=12)
     celda_dias.value = datos_de_captura[trabajador][valor + 1]
 
@@ -237,7 +237,7 @@ def capturar_reporte_personal(trabajador):
     celda_porcentaje = ws.cell(row=nueva_fila, column=19)
     celda_porcentaje.value = 1
 
-    # Crear la celda de actividades y asignarles el valor de datos_de_captura[0][5]
+    # Crear la celda de actividades y asignarles el valor de lista_de_actividades
     if datos_de_captura[trabajador][valor + 2] and datos_de_captura[trabajador][valor + 3] is not None:
         
         for valor in lista_de_actividades[trabajador]:
@@ -251,11 +251,13 @@ def capturar_reporte_personal(trabajador):
             celda_actividades = ws.cell(row=nueva_fila +2, column=4)
             celda_actividades.value = valor
             nueva_fila += 1
+    
     else:
         for valor in lista_de_actividades[trabajador]:
             celda_actividades = ws.cell(row=nueva_fila +1, column=4)
             celda_actividades.value = valor
             nueva_fila += 1
+    
             
     # Guardar los cambios y retornar la coordenada de la nueva celda
     wb.save(archivo_para_captura)
