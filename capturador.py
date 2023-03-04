@@ -321,7 +321,7 @@ lista_de_obras = [sublista[1] for sublista in datos_de_captura]
 
 print(f"Se ha terminado la captura del reporte :  SEMANA_0{num_semana} ")"""
 
-print(subcadenas)
+print(lista_de_actividades)
 
 
 
