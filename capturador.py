@@ -136,6 +136,7 @@ def capturar_reporte_personal(trabajador):
     ws = wb.active
 
     if datos_de_captura[trabajador][5] is None or datos_de_captura[trabajador][5] == '':
+
         # Inicializamos las variables para almacenar la última celda con un valor menor a 70
         ult_valor_menor_70 = None
         ult_celda_con_valor = None
@@ -150,7 +151,7 @@ def capturar_reporte_personal(trabajador):
         # Si encontramos un valor menor a 70, retornamos la coordenada de la última celda encontrada
         if ult_celda_con_valor is not None:
             celda = ws[ult_celda_con_valor]
-            nueva_fila = celda.row + 3
+            nueva_fila = celda.row + 1
             nueva_columna = celda.column - 1
             celda_para_captura = ws.cell(row=nueva_fila, column=nueva_columna)
 
@@ -180,12 +181,150 @@ def capturar_reporte_personal(trabajador):
             celda_para_captura = ws.cell(row=nueva_fila, column=nueva_columna)
 
             datos_capturados.append(celda_para_captura.coordinate)
+        
+        elif ult_celda_con_texto == "Domingo trabajado":
+            celda = ws[ult_celda_con_texto]
+            nueva_fila = celda.row + 1
+            nueva_columna = celda.column - 3
+            celda_para_captura = ws.cell(row=nueva_fila, column=nueva_columna)
+
+            datos_capturados.append(celda_para_captura.coordinate)
         # Si no encontramos ningún valor con texto, retornamos la celda A15
         else:
             nueva_fila = 15
             nueva_columna = 1
             celda_para_captura = ws.cell(row=nueva_fila, column=nueva_columna).coordinate
             datos_capturados.append(celda_para_captura)
+    
+    # Empezamos a buscar desde la fila 14
+    fila_actual = 14
+    
+    # Inicializamos el valor a devolver con None
+    ultimo_valor = None
+    
+    # Recorremos todas las filas de la hoja hasta encontrar un valor numérico menor a 70
+    while fila_actual <= 300:
+        celda_b = ws.cell(row=fila_actual, column=2)
+        valor_b = celda_b.value
+        
+        # Si la celda B de la fila actual tiene un valor numérico, lo guardamos como último valor
+        if isinstance(valor_b, (int, float)):
+            if valor_b < 70 and (ultimo_valor is None or valor_b > ultimo_valor):
+                ultimo_valor = valor_b
+        
+        fila_actual += 1
+    
+    # Cerramos el libro de Excel
+    wb.close()
+
+    # Si no se encontró ningún valor menor a 70, se devuelve 1
+    if ultimo_valor is None:
+        ultimo_valor = 0
+    datos_capturados.append(ultimo_valor)
+
+    # Cargamos el archivo de Excel que contiene la celda que queremos capturar
+    wb = openpyxl.load_workbook(archivo_para_captura)
+    # Seleccionamos la hoja en la que queremos buscar
+    ws = wb.active
+
+    # Crear la celda del codigo y asignarle la clave del trabajador
+    celda_codigo = ws.cell(row=nueva_fila, column=nueva_columna)
+    celda_codigo.value = datos_de_captura[trabajador][valor - 1]
+
+    # Crear la celda de horas extras y domingo, solo si existen y asignarles el valor de hora extra
+    if datos_de_captura[trabajador][valor + 2] and datos_de_captura[trabajador][valor + 3] is not None:
+        # Código para crear las celdas de horas extras y domingo para asignarles los valores
+        celda_horas = ws.cell(row=nueva_fila + 1, column=nueva_columna)
+        celda_horas.value = datos_de_captura[trabajador][valor + 6]
+        celda_horas2 = ws.cell(row=nueva_fila + 1, column=12)
+        celda_horas2.value = datos_de_captura[trabajador][valor + 2]
+        celda_domingo = ws.cell(row=nueva_fila + 2, column=nueva_columna)
+        celda_domingo.value = datos_de_captura[trabajador][valor + 5]
+        celda_domingo2 = ws.cell(row=nueva_fila + 2, column=12)
+        celda_domingo2.value = int(datos_de_captura[trabajador][valor + 3]) + 1
+        celda_domingo3 = ws.cell(row=nueva_fila + 2, column=4)
+        celda_domingo3.value = "Domingo trabajado"
+
+    elif datos_de_captura[trabajador][valor + 2] is not None:
+        celda_horas = ws.cell(row=nueva_fila + 1, column=nueva_columna)
+        celda_horas.value = datos_de_captura[trabajador][valor + 6]
+        celda_horas2 = ws.cell(row=nueva_fila + 1, column=12)
+        celda_horas2.value = datos_de_captura[trabajador][valor + 2]
+
+    # Crear las celdas de orden y asignarle el valor ultimo valor +1
+    
+    if datos_de_captura[trabajador][valor + 2] and datos_de_captura[trabajador][valor + 3] is not None:
+        celda_orden1 = ws.cell(row=nueva_fila, column=2)
+        celda_orden1.value = ultimo_valor +1
+        celda_orden2 = ws.cell(row=nueva_fila + 2, column=16)
+        celda_orden2.value = ultimo_valor +1
+        celda_ordenh = ws.cell(row=nueva_fila + 1, column=2)
+        celda_ordenh.value = ultimo_valor +1
+        celda_ordend = ws.cell(row=nueva_fila + 2, column=2)
+        celda_ordend.value = ultimo_valor +1
+
+    elif datos_de_captura[trabajador][valor + 2] is not None:
+        celda_orden1 = ws.cell(row=nueva_fila, column=2)
+        celda_orden1.value = ultimo_valor +1
+        celda_orden2 = ws.cell(row=nueva_fila + 1, column=16)
+        celda_orden2.value = ultimo_valor +1
+        celda_ordenh = ws.cell(row=nueva_fila + 1, column=2)
+        celda_ordenh.value = ultimo_valor +1
+    else:
+        celda_orden1 = ws.cell(row=nueva_fila, column=2)
+        celda_orden1.value = ultimo_valor +1
+        celda_orden2 = ws.cell(row=nueva_fila, column=16)
+        celda_orden2.value = ultimo_valor +1
+
+    # Crear las celdas de dias trabajados y asignarles el valor de datos_de_captura[0][2]
+    celda_dias = ws.cell(row=nueva_fila, column=12)
+    celda_dias.value = datos_de_captura[trabajador][valor + 1]
+
+    # Crear la celda de porcentaje y asignarles el valor de 1
+    celda_porcentaje = ws.cell(row=nueva_fila, column=19)
+    celda_porcentaje.value = 1
+
+    # Crear la celda de actividades y asignarles el valor de lista_de_actividades
+    if datos_de_captura[trabajador][valor + 2] and datos_de_captura[trabajador][valor + 3] is not None:
+        
+        for valor in lista_de_actividades[trabajador]:
+            celda_actividades = ws.cell(row=nueva_fila +3, column=4)
+            celda_actividades.value = valor
+            nueva_fila += 1
+
+    elif datos_de_captura[trabajador][valor + 2] is not None:
+
+        for valor in lista_de_actividades[trabajador]:
+            celda_actividades = ws.cell(row=nueva_fila +2, column=4)
+            celda_actividades.value = valor
+            nueva_fila += 1
+    
+    else:
+        for valor in lista_de_actividades[trabajador]:
+            celda_actividades = ws.cell(row=nueva_fila +1, column=4)
+            celda_actividades.value = valor
+            nueva_fila += 1
+    
+            
+    # Guardar los cambios y retornar la coordenada de la nueva celda
+    wb.save(archivo_para_captura)
+    trabajador +1
+    return datos_capturados
+
+# El ciclo for que capturara todos los valores en los archivos de excel, recorriendo en el parametro de la funcion cada uno de los valores del reporte
+clave_trabajadores = [sublista[0] for sublista in datos_de_captura]
+lista_de_obras = [sublista[1] for sublista in datos_de_captura]
+
+"""for clave in trabajador:
+    print("Se ha capturado en la obra", lista_de_obras[clave], "el trabajador numero : ", clave_trabajadores[clave])
+    capturar_reporte_personal(clave)
+
+print(f"Se ha terminado la captura del reporte :  SEMANA_0{num_semana} ")"""
+
+print(subcadenas)
+
+
+
 
 
 
