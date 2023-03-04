@@ -79,8 +79,6 @@ for i, actividad in enumerate(actividades):
     lista_de_actividades[i].extend(subcadenas)
 
 
-
-
 # La lista trabajadores, contendra las claves de cada uno de los trabajadores en datos_de_captura
 trabajadores = [lista[0] for lista in datos_de_captura]
 
