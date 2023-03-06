@@ -167,6 +167,16 @@ def capturar_reporte_personal(trabajador):
     
     else:
         # Inicializamos las variables para almacenar la última celda con texto en la columna 4
+        ult_celda_con_valor = None
+        # Recorremos las filas desde la 14 hasta la 300
+        for fila in range(14, 301):
+            # Obtenemos el valor de la celda B en la fila actual
+            valor_celda = ws.cell(row=fila, column=2).value
+            # Si el valor es un número menor a 70, lo almacenamos
+            if isinstance(valor_celda, (int, float)) and valor_celda < 70:
+                ult_valor_menor_70 = valor_celda
+                ult_celda_con_valor = ws.cell(row=fila, column=2).coordinate
+
         ult_celda_con_texto = None
         # Recorremos las filas desde la 14 hasta la 300
         for fila in range(14, 301):
@@ -176,11 +186,11 @@ def capturar_reporte_personal(trabajador):
             if isinstance(valor_celda, str):
                 ult_celda_con_texto = ws.cell(row=fila, column=4).coordinate
         # Si encontramos un valor con texto, retornamos la coordenada de la última celda encontrada
-        if ult_celda_con_texto is not None:
-            celda = ws[ult_celda_con_texto]
+        if valor_celda is not None and valor_celda != "Domingo trabajado":
+            celda = ws[ult_celda_con_valor]
             nueva_fila = celda.row + 2
-            nueva_columna = celda.column - 3
-            celda_para_captura = ws.cell(row=nueva_fila, column=nueva_columna)
+            nueva_columna = celda.column - 1
+            celda_para_captura = ws.cell(row=nueva_fila +1, column=nueva_columna)
 
             datos_capturados.append(celda_para_captura.coordinate)
         
@@ -193,10 +203,18 @@ def capturar_reporte_personal(trabajador):
             datos_capturados.append(celda_para_captura.coordinate)
         # Si no encontramos ningún valor con texto, retornamos la celda A15
         else:
-            nueva_fila = 15
-            nueva_columna = 1
-            celda_para_captura = ws.cell(row=nueva_fila, column=nueva_columna).coordinate
-            datos_capturados.append(celda_para_captura)
+            if ult_celda_con_valor is not None:
+                celda = ws[ult_celda_con_valor]
+                nueva_fila = celda.row + 1
+                nueva_columna = celda.column - 1
+                celda_para_captura = ws.cell(row=nueva_fila, column=nueva_columna)
+
+                datos_capturados.append(celda_para_captura.coordinate)
+            else:
+                nueva_fila = 15
+                nueva_columna = 1
+                celda_para_captura = ws.cell(row=nueva_fila, column=nueva_columna).coordinate
+                datos_capturados.append(celda_para_captura)
     
     # Empezamos a buscar desde la fila 14
     fila_actual = 14
@@ -322,6 +340,7 @@ for clave in trabajador:
     capturar_reporte_personal(clave)
 
 print(f"Se ha terminado la captura del reporte :  SEMANA_0{num_semana} ")
+
 
 
 
