@@ -71,14 +71,8 @@ for i, actividad in enumerate(actividades):
 trabajadores = [lista[0] for lista in datos_de_captura]
 
 # Este ciclo for llenara la lista trabajador, enumerando a trabajadores iniciando desde el 0, para poder usarla como parametro en nuestra variable
-trabajador = []
-for i in trabajadores:
-    count = 0
-    for j in trabajadores:
-        if j < i:
-            count += 1
-    trabajador.append(count)
-trabajador = sorted(trabajador)
+# Enumeramos los elementos de la lista y guardamos los índices en una lista
+trabajador = [i for i, _ in enumerate(trabajadores)]
 
 # FUNCION PARA CAPTURAR EN EL ARCHIVO EXCEL: 
 """ Esta funcion realiza una búsqueda en un archivo de Excel que contiene un registro de reporte personal de un trabajador específico. El objetivo es buscar el último valor numérico menor a 70 en la columna B, guardar la coordenada de la celda y devolverla en la lista datos_capturados. En caso de no encontrar ningún valor numérico menor a 70, se devolverá la coordenada de la celda A15.
@@ -288,11 +282,8 @@ def capturar_reporte_personal(trabajador):
 clave_trabajadores = [sublista[0] for sublista in datos_de_captura]
 lista_de_obras = [sublista[1] for sublista in datos_de_captura]
 
-"""for clave in trabajador:
+for clave in trabajador:
     print("Se ha capturado en la obra", lista_de_obras[clave], "el trabajador numero : ", clave_trabajadores[clave])
     capturar_reporte_personal(clave)
 
-print(f"Se ha terminado la captura del reporte :  SEMANA_0{num_semana} ")"""
-
-print(lista_de_obras)
-print(trabajador)
+print(f"Se ha terminado la captura del reporte :  SEMANA_0{num_semana} ")
