@@ -34,6 +34,7 @@ while hoja.cell(row=fila, column=1).value:
 
     # Avanzamos a la siguiente fila
     fila += 1
+datos_de_captura
 
 
 # GENERAMOS LA LISTA DE ACTIVIDADES
@@ -80,10 +81,8 @@ trabajador = [i for i, _ in enumerate(trabajadores)]
 Después de encontrar la coordenada de la celda, la función realiza varias tareas adicionales, como cargar el archivo de Excel, asignar valores a celdas específicas y guardar el archivo con los cambios. """
 
 def capturar_reporte_personal(trabajador):
-
-    datos_capturados = []
+    # Quedaria corregir este valor inecesario para la clave de obra
     valor = 1
-
     # obtener el valor de búsqueda
     clave_obra = datos_de_captura[trabajador][valor]
 
@@ -95,7 +94,6 @@ def capturar_reporte_personal(trabajador):
         if archivo.startswith(clave_obra):
             # si se encuentra el archivo, regresar la ruta completa
             archivo_para_captura = os.path.join(ruta_busqueda, archivo)
-            datos_capturados.append(archivo_para_captura)
             break
     
      # si no se encontró ningún archivo, regresar None
@@ -132,36 +130,37 @@ def capturar_reporte_personal(trabajador):
             ult_celda_con_texto = ws.cell(row=fila, column=4).coordinate
 
     # Logica para asignar las celdas de captura dependiendo el ultimo valor
-    if ult_texto is None and ult_celda_con_valor is None:
+    if ult_celda_con_valor is None:
         nueva_fila = 15
         nueva_columna = 1
-        celda_para_captura = ws.cell(row=nueva_fila, column=nueva_columna).coordinate
-        celda_para_captura = ws.cell(row=nueva_fila, column=nueva_columna)
-
-        datos_capturados.append(celda_para_captura)
-
-    elif ult_texto == "Domingo trabajado" or ult_texto.startswith("Tiempo extra"):
-        celda = ws[ult_celda_con_valor]
-        nueva_fila = celda.row + 1
-        nueva_columna = celda.column - 1
-        celda_para_captura = ws.cell(row=nueva_fila, column=nueva_columna)
-
-        datos_capturados.append(celda_para_captura.coordinate)
-
-    elif ult_texto is not None and len(ult_texto) > 2:
-        celda = ws[ult_celda_con_texto]
-        nueva_fila = celda.row + 2
-        nueva_columna = celda.column - 3
-        celda_para_captura = ws.cell(row=nueva_fila, column=nueva_columna)
-
-        datos_capturados.append(celda_para_captura.coordinate)
+        ws.cell(row=nueva_fila, column=nueva_columna)
+        
     else:
-        celda = ws[ult_celda_con_valor]
-        nueva_fila = celda.row +1
-        nueva_columna = celda.column -1
-        celda_para_captura = ws.cell(row=nueva_fila, column=nueva_columna).coordinate
+        if ult_texto is None:
+            celda = ws[ult_celda_con_valor]
+            nueva_fila = celda.row +1
+            nueva_columna = celda.column -1
+            ws.cell(row=nueva_fila, column=nueva_columna)
+            
+        elif ult_texto == "Domingo trabajado" or ult_texto.startswith("Tiempo extra"):
+            celda = ws[ult_celda_con_texto]
+            nueva_fila = celda.row +1
+            nueva_columna = celda.column -3
+            ws.cell(row=nueva_fila, column=nueva_columna)
+            
+        elif datos_de_captura[trabajador][5] is None or "":
+            celda = ws[ult_celda_con_valor]
+            nueva_fila = celda.row +1
+            nueva_columna = celda.column -1
+            ws.cell(row=nueva_fila, column=nueva_columna)
+                  
+        else:
+            celda = ws[ult_celda_con_texto]
+            nueva_fila = celda.row +2
+            nueva_columna = celda.column -3
+            ws.cell(row=nueva_fila, column=nueva_columna)
+            
 
-        datos_capturados.append(celda_para_captura)
     
     # Empezamos a buscar desde la fila 14
     fila_actual = 14
@@ -187,7 +186,7 @@ def capturar_reporte_personal(trabajador):
     # Si no se encontró ningún valor menor a 70, se devuelve 1
     if ultimo_valor is None:
         ultimo_valor = 0
-    datos_capturados.append(ultimo_valor)
+    ultimo_valor
 
     # Cargamos el archivo de Excel que contiene la celda que queremos capturar
     wb = openpyxl.load_workbook(archivo_para_captura)
@@ -205,7 +204,7 @@ def capturar_reporte_personal(trabajador):
         celda_horas.value = "lote"
 
         celda_horas2 = ws.cell(row=nueva_fila + 1, column=9)
-        celda_horas2.value = ((datos_de_captura[trabajador][valor + 6]) * 0.0025) 
+        celda_horas2.value = float(datos_de_captura[trabajador][valor + 6]) * 0.0025 
 
         celda_horas3 = ws.cell(row=nueva_fila + 1, column=12)
         celda_horas3.value = datos_de_captura[trabajador][valor + 2]
@@ -311,8 +310,6 @@ def capturar_reporte_personal(trabajador):
             
     # Guardar los cambios y retornar la coordenada de la nueva celda
     wb.save(archivo_para_captura)
-    trabajador +1
-    return datos_capturados
 
 # El ciclo for que capturara todos los valores en los archivos de excel, recorriendo en el parametro de la funcion cada uno de los valores del reporte
 clave_trabajadores = [sublista[0] for sublista in datos_de_captura]
@@ -323,4 +320,3 @@ for clave in trabajador:
     capturar_reporte_personal(clave)
 
 print(f"Se ha terminado la captura del reporte :  SEMANA_0{num_semana} ")
-
