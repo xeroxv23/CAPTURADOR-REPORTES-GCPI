@@ -140,7 +140,7 @@ def capturar_reporte_personal(trabajador):
 
         datos_capturados.append(celda_para_captura)
 
-    elif ult_texto == "Domingo trabajado":
+    elif ult_texto == "Domingo trabajado" or ult_texto.startswith("Tiempo extra"):
         celda = ws[ult_celda_con_valor]
         nueva_fila = celda.row + 1
         nueva_columna = celda.column - 1
@@ -202,22 +202,58 @@ def capturar_reporte_personal(trabajador):
     if datos_de_captura[trabajador][valor + 2] and datos_de_captura[trabajador][valor + 3] is not None:
         # Código para crear las celdas de horas extras y domingo para asignarles los valores
         celda_horas = ws.cell(row=nueva_fila + 1, column=nueva_columna)
-        celda_horas.value = datos_de_captura[trabajador][valor + 6]
-        celda_horas2 = ws.cell(row=nueva_fila + 1, column=12)
-        celda_horas2.value = datos_de_captura[trabajador][valor + 2]
+        celda_horas.value = "lote"
+
+        celda_horas2 = ws.cell(row=nueva_fila + 1, column=9)
+        celda_horas2.value = ((datos_de_captura[trabajador][valor + 6]) * 0.0025) 
+
+        celda_horas3 = ws.cell(row=nueva_fila + 1, column=12)
+        celda_horas3.value = datos_de_captura[trabajador][valor + 2]
+        cantidad_horas = datos_de_captura[trabajador][valor + 2]
+
+        celda_horas4 = ws.cell(row=nueva_fila + 1, column=4)
+        celda_horas4.value = (f"Tiempo extra, {cantidad_horas} horas trabajadas")
+
         celda_domingo = ws.cell(row=nueva_fila + 2, column=nueva_columna)
-        celda_domingo.value = datos_de_captura[trabajador][valor + 5]
-        celda_domingo2 = ws.cell(row=nueva_fila + 2, column=12)
-        celda_domingo2.value = int(datos_de_captura[trabajador][valor + 3]) + 1
-        celda_domingo3 = ws.cell(row=nueva_fila + 2, column=4)
-        celda_domingo3.value = "Domingo trabajado"
+        celda_domingo.value = "lote"
+
+        celda_domingo2 = ws.cell(row=nueva_fila + 2, column=9)
+        celda_domingo2.value = ((datos_de_captura[trabajador][valor + 6]) / 100)
+
+        celda_domingo3 = ws.cell(row=nueva_fila + 2, column=12)
+        celda_domingo3.value = datos_de_captura[trabajador][valor + 3] + 1
+
+        celda_domingo4 = ws.cell(row=nueva_fila + 2, column=4)
+        celda_domingo4.value = "Domingo trabajado"
 
     elif datos_de_captura[trabajador][valor + 2] is not None:
         celda_horas = ws.cell(row=nueva_fila + 1, column=nueva_columna)
-        celda_horas.value = datos_de_captura[trabajador][valor + 6]
-        celda_horas2 = ws.cell(row=nueva_fila + 1, column=12)
-        celda_horas2.value = datos_de_captura[trabajador][valor + 2]
+        celda_horas.value = "lote"
 
+        celda_horas2 = ws.cell(row=nueva_fila + 1, column=9)
+        celda_horas2.value = ((datos_de_captura[trabajador][valor + 6]) * 0.0025) 
+
+        celda_horas3 = ws.cell(row=nueva_fila + 1, column=12)
+        celda_horas3.value = datos_de_captura[trabajador][valor + 2]
+        cantidad_horas = datos_de_captura[trabajador][valor + 2]
+
+        celda_horas4 = ws.cell(row=nueva_fila + 1, column=4)
+        celda_horas4.value = (f"Tiempo extra, {cantidad_horas} horas trabajadas")
+    
+    elif datos_de_captura[trabajador][valor + 3] is not None:
+
+        celda_domingo = ws.cell(row=nueva_fila + 2, column=nueva_columna)
+        celda_domingo.value = "lote"
+
+        celda_domingo2 = ws.cell(row=nueva_fila + 2, column=9)
+        celda_domingo2.value = ((datos_de_captura[trabajador][valor + 6]) / 100)
+
+        celda_domingo3 = ws.cell(row=nueva_fila + 2, column=12)
+        celda_domingo3.value = datos_de_captura[trabajador][valor + 3] + 1
+
+        celda_domingo4 = ws.cell(row=nueva_fila + 2, column=4)
+        celda_domingo4.value = "Domingo trabajado"
+        
     # Crear las celdas de orden y asignarle el valor ultimo valor +1
     
     if datos_de_captura[trabajador][valor + 2] and datos_de_captura[trabajador][valor + 3] is not None:
@@ -287,3 +323,4 @@ for clave in trabajador:
     capturar_reporte_personal(clave)
 
 print(f"Se ha terminado la captura del reporte :  SEMANA_0{num_semana} ")
+
