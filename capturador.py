@@ -315,8 +315,8 @@ def capturar_reporte_personal(trabajador):
 clave_trabajadores = [sublista[0] for sublista in datos_de_captura]
 lista_de_obras = [sublista[1] for sublista in datos_de_captura]
 
-"""for clave in trabajador:
+for clave in trabajador:
     print("Se ha capturado en la obra", lista_de_obras[clave], "el trabajador numero : ", clave_trabajadores[clave])
     capturar_reporte_personal(clave)
 
-print(f"Se ha terminado la captura del reporte :  SEMANA_0{num_semana} ")"""
+print(f"Se ha terminado la captura del reporte :  SEMANA_0{num_semana} ")

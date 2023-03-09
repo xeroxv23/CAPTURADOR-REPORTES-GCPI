@@ -1,7 +1,7 @@
 import openpyxl
 import os
 import re
-from capturador import datos_de_captura
+from capturador import datos_de_captura, lista_de_actividades
 
 num_semana = 8
 
@@ -185,19 +185,96 @@ def prueba_captura(trabajador):
         celda_domingo4 = celda_para_captura.parent.cell(row=fila_orden +2, column=columna_orden +3)
         celda_domingo4.value = "Domingo trabajado"
 
-        
+    # Asignar actividades
+
+    if datos_de_captura[trabajador][5] is not None and datos_de_captura[trabajador][3] is not None and datos_de_captura[trabajador][4] is not None:
+
+        for valor in lista_de_actividades[trabajador]:
+            celda_actividades = celda_para_captura.parent.cell(row=fila_orden +3, column=columna_orden +3)
+            celda_actividades.value = valor
+            fila_orden += 1
+
+    elif datos_de_captura[trabajador][5] is not None and datos_de_captura[trabajador][3] is not None and datos_de_captura[trabajador][4] is None:
+
+        for valor in lista_de_actividades[trabajador]:
+            celda_actividades = celda_para_captura.parent.cell(row=fila_orden +2, column=columna_orden +3)
+            celda_actividades.value = valor
+            fila_orden += 1
+
+    elif datos_de_captura[trabajador][5] is not None and datos_de_captura[trabajador][3] is None and datos_de_captura[trabajador][4] is not None:
+
+        for valor in lista_de_actividades[trabajador]:
+            celda_actividades = celda_para_captura.parent.cell(row=fila_orden +2, column=columna_orden +3)
+            celda_actividades.value = valor
+            fila_orden += 1
+
+    elif datos_de_captura[trabajador][5] is not None and datos_de_captura[trabajador][3] is None and datos_de_captura[trabajador][4] is None:
+
+        for valor in lista_de_actividades[trabajador]:
+            celda_actividades = celda_para_captura.parent.cell(row=fila_orden +1, column=columna_orden +3)
+            celda_actividades.value = valor
+            fila_orden += 1
+
+    else:
+        pass
+
 
     wb.save(archivo_para_captura)
-    return print("Se capturo el trabajador")
+    wb.close()
 
-prueba_captura(1)
+    # Cargamos el archivo_para_captura de Excel
+    wb = openpyxl.load_workbook(archivo_para_captura)
+    # Seleccionamos la hoja en la que queremos buscar
+    ws = wb.active
 
+    # Inicializar las variables que almacenarán la celda con el último valor encontrado
+    ultima_celda_b = None
+    ultima_celda_d = None
 
-"""return archivo_para_captura, ultima_celda_b, ultima_celda_d, celda_para_captura, ultimo_valor
+    # Recorrer las filas del rango especificado
+    for fila in range(14, 301):
+
+        # Obtener el valor de la columna B en la fila actual
+        valor_b = ws.cell(row=fila, column=2).value
+        # Si el valor es un número menor a 70, lo almacenamos
+        if isinstance(valor_b, (int, float)) and valor_b < 70:
+            ultima_celda_b = ws.cell(row=fila, column=2)
+
+        # Obtener el valor de la columna D en la fila actual
+        valor_d = ws.cell(row=fila, column=4).value
+        # Si el valor es un string, lo almacenamos
+        if isinstance(valor_d, str):
+            ultima_celda_d = ws.cell(row=fila, column=4)
         
-# Llamar a la funcion
-archivo_para_captura, ultima_celda_b, ultima_celda_d, celda_para_captura, ultimo_valor  = prueba_captura(0)
+        # Obtener la celda para captura
+        if ultima_celda_b is not None and ultima_celda_d is not None:
+            # Si se encontró una celda en ambas columnas, seleccionar la que tenga el row mayor
+            ultima_celda = ultima_celda_b if ultima_celda_b.row > ultima_celda_d.row else ultima_celda_d
+        elif ultima_celda_b is not None:
+            # Si solo se encontró una celda en la columna B, usar esa celda
+            ultima_celda = ultima_celda_b
+        elif ultima_celda_d is not None:
+            # Si solo se encontró una celda en la columna D, usar esa celda
+            ultima_celda = ultima_celda_d
+        else:
+            # Si no se encontró ninguna celda, seleccionar la celda en la fila 15, columna 1
+            ultima_celda = ws.cell(row=15, column=1)
+        
+        # Reemplazar a que siempre sea la columna A
+        ultima_celda.column = 1
+       # Obtener el número de fila y columna de la celda
+        fila_actual = ultima_celda.row
+        columna_actual = ultima_celda.column
+        # Sumar 1 al número de fila
+        nueva_fila = fila_actual
+        # Crear una nueva instancia de la clase Cell con la misma columna y la nueva fila
+        celda_para_captura = ultima_celda.parent.cell(row=nueva_fila, column=columna_actual)
+    
+    # Cerrar el archivo
+    wb.close()
 
-# Imprimir las coordenadas de las últimas celdas encontradas
-print(celda_para_captura)"""
+    return print("Se ha capturado en la obra", datos_de_captura[trabajador][1], "el trabajador numero : ", datos_de_captura[trabajador][0], celda_para_captura.coordinate)
+
+prueba_captura(0)
+
 
