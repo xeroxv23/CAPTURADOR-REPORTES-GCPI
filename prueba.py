@@ -4,7 +4,6 @@ import re
 from capturador import datos_de_captura
 
 num_semana = 8
-print(datos_de_captura)
 
 def prueba_captura(trabajador):
     clave_de_obra = datos_de_captura[trabajador][1]
@@ -28,6 +27,7 @@ def prueba_captura(trabajador):
 
     # Recorrer las filas del rango especificado
     for fila in range(14, 301):
+
         # Obtener el valor de la columna B en la fila actual
         valor_b = ws.cell(row=fila, column=2).value
         # Si el valor es un número menor a 70, lo almacenamos
@@ -39,7 +39,7 @@ def prueba_captura(trabajador):
         # Si el valor es un string, lo almacenamos
         if isinstance(valor_d, str):
             ultima_celda_d = ws.cell(row=fila, column=4)
-
+        
         # Obtener la celda para captura
         if ultima_celda_b is not None and ultima_celda_d is not None:
             # Si se encontró una celda en ambas columnas, seleccionar la que tenga el row mayor
@@ -60,20 +60,144 @@ def prueba_captura(trabajador):
         fila_actual = ultima_celda.row
         columna_actual = ultima_celda.column
         # Sumar 1 al número de fila
-        nueva_fila = fila_actual + 1
+        nueva_fila = fila_actual
         # Crear una nueva instancia de la clase Cell con la misma columna y la nueva fila
         celda_para_captura = ultima_celda.parent.cell(row=nueva_fila, column=columna_actual)
+
+    celda_para_captura
+
+    # Empezamos a buscar desde la fila 14
+    fila_actual = 14
+    
+    # Inicializamos el valor a devolver con None
+    ultimo_valor = None
+    
+    # Recorremos todas las filas de la hoja hasta encontrar un valor numérico menor a 70
+    while fila_actual <= 300:
+        celda_b = ws.cell(row=fila_actual, column=2)
+        valor_b = celda_b.value
+        
+        # Si la celda B de la fila actual tiene un valor numérico, lo guardamos como último valor
+        if isinstance(valor_b, (int, float)):
+            if valor_b < 70 and (ultimo_valor is None or valor_b > ultimo_valor):
+                ultimo_valor = valor_b
+        
+        fila_actual += 1
+    
+    # Si no se encontró ningún valor menor a 70, se devuelve 1
+    if ultimo_valor is None:
+        ultimo_valor = 1
+    ultimo_valor
+
+    """ SIGUE EL PROCESO MAS IMPORTANTE DE LA FUNCION Y ES CAPTURAR LOS DATOS DE LA LISTA DEL TRABAJADOR CORRIENDO EN LA FUNCION, EN LAS CELDAS QUE YA FUERON OBTENIDAS"""
+
+    # Crear la celda del codigo y asignarle la clave del trabajador
+    fila_codigo = celda_para_captura.row
+    columna_codigo = celda_para_captura.column
+    celda_codigo = celda_para_captura.parent.cell(row=fila_codigo, column=columna_codigo)
+    celda_codigo.value = datos_de_captura[trabajador][0]
+
+    # Asignar los valores:
+    if datos_de_captura[trabajador][3] is None and datos_de_captura[trabajador][4] is None:
+        fila_orden = celda_para_captura.row
+        columna_orden = celda_para_captura.column
+        celda_orden1 = celda_para_captura.parent.cell(row=fila_orden, column=columna_orden +1)
+        celda_orden1.value = ultimo_valor
+        celda_orden2 = celda_para_captura.parent.cell(row=fila_orden, column=columna_orden +15)
+        celda_orden2.value = ultimo_valor
+        celda_dias = celda_para_captura.parent.cell(row=fila_orden, column=columna_orden +11)
+        celda_dias.value = datos_de_captura[trabajador][2]
+        celda_porcentaje = celda_para_captura.parent.cell(row=fila_orden, column=columna_orden +18)
+        celda_porcentaje.value = 1
+
+    elif datos_de_captura[trabajador][3] is not None and datos_de_captura[trabajador][4] is None:
+        fila_orden = celda_para_captura.row
+        columna_orden = celda_para_captura.column
+        celda_orden1 = celda_para_captura.parent.cell(row=fila_orden, column=columna_orden +1)
+        celda_orden1.value = ultimo_valor
+        celda_horas = celda_para_captura.parent.cell(row=fila_orden +1, column=columna_orden)
+        celda_horas.value = "lote"
+        celda_orden2 = celda_para_captura.parent.cell(row=fila_orden +1, column=columna_orden +1)
+        celda_orden2.value = ultimo_valor
+        celda_horas2 = celda_para_captura.parent.cell(row=fila_orden +1, column=columna_orden +8)
+        celda_horas2.value = float(datos_de_captura[trabajador][7]) * 0.0025 
+        celda_orden3 = celda_para_captura.parent.cell(row=fila_orden +1, column=columna_orden +15)
+        celda_orden3.value = ultimo_valor
+        celda_horas3 = celda_para_captura.parent.cell(row=fila_orden +1, column=columna_orden +11)
+        celda_horas3.value = datos_de_captura[trabajador][3]
+        celda_horas4 = celda_para_captura.parent.cell(row=fila_orden +1, column=columna_orden +3)
+        celda_horas4.value = (f"Tiempo extra, {datos_de_captura[trabajador][3]} horas trabajadas")
+        celda_dias = celda_para_captura.parent.cell(row=fila_orden, column=columna_orden +11)
+        celda_dias.value = datos_de_captura[trabajador][2]
+        celda_porcentaje = celda_para_captura.parent.cell(row=fila_orden, column=columna_orden +18)
+        celda_porcentaje.value = 1
+
+    elif datos_de_captura[trabajador][3] is None and datos_de_captura[trabajador][4] is not None:
+        fila_orden = celda_para_captura.row
+        columna_orden = celda_para_captura.column
+        celda_orden1 = celda_para_captura.parent.cell(row=fila_orden, column=columna_orden +1)
+        celda_orden1.value = ultimo_valor
+        celda_domingo = celda_para_captura.parent.cell(row=fila_orden +1, column=columna_orden)
+        celda_domingo.value = "lote"
+        celda_orden2 = celda_para_captura.parent.cell(row=fila_orden +1, column=columna_orden +1)
+        celda_orden2.value = ultimo_valor
+        celda_domingo2 = celda_para_captura.parent.cell(row=fila_orden +1, column=columna_orden +8)
+        celda_domingo2.value = ((datos_de_captura[trabajador][7]) / 100)
+        celda_orden3 = celda_para_captura.parent.cell(row=fila_orden +1, column=columna_orden +15)
+        celda_orden3.value = ultimo_valor
+        celda_domingo3 = celda_para_captura.parent.cell(row=fila_orden +1, column=columna_orden +11)
+        celda_domingo3.value = datos_de_captura[trabajador][4] + 1
+        celda_domingo4 = celda_para_captura.parent.cell(row=fila_orden +1, column=columna_orden +3)
+        celda_domingo4.value = "Domingo trabajado"
+        celda_dias = celda_para_captura.parent.cell(row=fila_orden, column=columna_orden +11)
+        celda_dias.value = datos_de_captura[trabajador][2]
+        celda_porcentaje = celda_para_captura.parent.cell(row=fila_orden, column=columna_orden +18)
+        celda_porcentaje.value = 1
+    else:
+        fila_orden = celda_para_captura.row
+        columna_orden = celda_para_captura.column
+        celda_orden1 = celda_para_captura.parent.cell(row=fila_orden, column=columna_orden +1)
+        celda_orden1.value = ultimo_valor
+        celda_orden2 = celda_para_captura.parent.cell(row=fila_orden +1, column=columna_orden +1)
+        celda_orden2.value = ultimo_valor
+        celda_orden3 = celda_para_captura.parent.cell(row=fila_orden +2, column=columna_orden +1)
+        celda_orden3.value = ultimo_valor
+        celda_orden4 = celda_para_captura.parent.cell(row=fila_orden +2, column=columna_orden +15)
+        celda_orden4.value = ultimo_valor
+        celda_dias = celda_para_captura.parent.cell(row=fila_orden, column=columna_orden +11)
+        celda_dias.value = datos_de_captura[trabajador][2]
+        celda_porcentaje = celda_para_captura.parent.cell(row=fila_orden, column=columna_orden +18)
+        celda_porcentaje.value = 1
+        celda_horas = celda_para_captura.parent.cell(row=fila_orden +1, column=columna_orden)
+        celda_horas.value = "lote"
+        celda_horas2 = celda_para_captura.parent.cell(row=fila_orden +1, column=columna_orden +8)
+        celda_horas2.value = float(datos_de_captura[trabajador][7]) * 0.0025
+        celda_horas3 = celda_para_captura.parent.cell(row=fila_orden +1, column=columna_orden +11)
+        celda_horas3.value = datos_de_captura[trabajador][3]
+        celda_horas4 = celda_para_captura.parent.cell(row=fila_orden +1, column=columna_orden +3)
+        celda_horas4.value = (f"Tiempo extra, {datos_de_captura[trabajador][3]} horas trabajadas")
+        celda_domingo = celda_para_captura.parent.cell(row=fila_orden +2, column=columna_orden)
+        celda_domingo.value = "lote"
+        celda_domingo2 = celda_para_captura.parent.cell(row=fila_orden +2, column=columna_orden +8)
+        celda_domingo2.value = ((datos_de_captura[trabajador][7]) / 100)
+        celda_domingo3 = celda_para_captura.parent.cell(row=fila_orden +2, column=columna_orden +11)
+        celda_domingo3.value = datos_de_captura[trabajador][4] + 1
+        celda_domingo4 = celda_para_captura.parent.cell(row=fila_orden +2, column=columna_orden +3)
+        celda_domingo4.value = "Domingo trabajado"
+
         
 
-    return archivo_para_captura, ultima_celda_b, ultima_celda_d, celda_para_captura
+    wb.save(archivo_para_captura)
+    return print("Se capturo el trabajador")
+
+prueba_captura(1)
+
+
+"""return archivo_para_captura, ultima_celda_b, ultima_celda_d, celda_para_captura, ultimo_valor
         
 # Llamar a la funcion
-archivo_para_captura, ultima_celda_b, ultima_celda_d, celda_para_captura = prueba_captura(0)
+archivo_para_captura, ultima_celda_b, ultima_celda_d, celda_para_captura, ultimo_valor  = prueba_captura(0)
 
 # Imprimir las coordenadas de las últimas celdas encontradas
-print(archivo_para_captura)
-print('La última celda en la columna B es:', ultima_celda_b)
-print('La última celda en la columna D es:', ultima_celda_d)
-print(celda_para_captura.coordinate)
+print(celda_para_captura)"""
 
-        
